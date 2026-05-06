@@ -56,7 +56,7 @@ textarea:focus{border-color:var(--acc)}
 textarea::placeholder{color:var(--t3)}
 
 /* MODES */
-.modes{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.modes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
 .mode{border:1px solid var(--b2);border-radius:var(--r);padding:10px 7px;cursor:pointer;background:var(--s2);transition:all .15s;text-align:center}
 .mode:hover{background:var(--s3)}
 .mode.on-m{border-color:var(--acc);background:#0d0b1e}
@@ -135,6 +135,15 @@ svg.mm{width:100%;height:100%;min-height:400px}
 /* TOAST */
 .toast{position:fixed;bottom:14px;right:14px;background:var(--s3);color:var(--t1);border:1px solid var(--b3);padding:9px 15px;border-radius:var(--r);font-size:.76rem;font-weight:500;z-index:200;transform:translateY(70px);transition:transform .25s;pointer-events:none;max-width:280px;line-height:1.4}
 .toast.on{transform:translateY(0)}
+
+/* STYLE SELECTOR */
+.style-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.style-card{border:1px solid var(--b2);border-radius:8px;padding:6px 4px;cursor:pointer;background:var(--s2);transition:all .15s;text-align:center;display:flex;flex-direction:column;gap:4px;align-items:center}
+.style-card:hover{border-color:var(--b3);background:var(--s3)}
+.style-card.on{border-color:var(--acc2);background:#04130d}
+.style-card span{font-size:.58rem;font-weight:600;color:var(--t2);font-family:var(--fh)}
+.style-card.on span{color:var(--acc2)}
+.style-preview{width:100%;height:28px;border-radius:5px;border:1px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px}
 </style>
 </head>
 <body>
@@ -174,11 +183,45 @@ svg.mm{width:100%;height:100%;min-height:400px}
         <div class="modes">
           <div class="mode on-m" id="bm" onclick="setMode('mind')">
             <span class="mode-ic">🧠</span>
-            <span class="mode-lb">Mapa mental</span>
+            <span class="mode-lb">Mapa Mental</span>
+          </div>
+          <div class="mode" id="bc" onclick="setMode('concept')">
+            <span class="mode-ic">🗂️</span>
+            <span class="mode-lb">Mapa Conceptual</span>
           </div>
           <div class="mode" id="bs" onclick="setMode('slide')">
             <span class="mode-ic">📊</span>
             <span class="mode-lb">Presentación</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="styleSection" style="display:none">
+        <div class="lbl">Estilo visual</div>
+        <div class="style-grid">
+          <div class="style-card on" data-style="elegante" onclick="setStyle(this,'elegante')">
+            <div class="style-preview" style="background:linear-gradient(135deg,#1A1200,#2A1F00);border-color:#D4AF37"><div style="width:60%;height:3px;background:#D4AF37;border-radius:2px;margin-bottom:3px"></div><div style="width:80%;height:2px;background:#C8960C;opacity:.5;border-radius:2px"></div></div>
+            <span>Elegante</span>
+          </div>
+          <div class="style-card" data-style="moderno" onclick="setStyle(this,'moderno')">
+            <div class="style-preview" style="background:linear-gradient(135deg,#020B18,#0A1628);border-color:#00D4FF"><div style="width:60%;height:3px;background:#00D4FF;border-radius:2px;margin-bottom:3px"></div><div style="width:80%;height:2px;background:#0080FF;opacity:.5;border-radius:2px"></div></div>
+            <span>Moderno</span>
+          </div>
+          <div class="style-card" data-style="minimalista" onclick="setStyle(this,'minimalista')">
+            <div class="style-preview" style="background:linear-gradient(135deg,#0a0a0a,#141414);border-color:#e0e0e0"><div style="width:60%;height:3px;background:#e0e0e0;border-radius:2px;margin-bottom:3px"></div><div style="width:80%;height:2px;background:#999;opacity:.5;border-radius:2px"></div></div>
+            <span>Minimal</span>
+          </div>
+          <div class="style-card" data-style="vibrante" onclick="setStyle(this,'vibrante')">
+            <div class="style-preview" style="background:linear-gradient(135deg,#120020,#1E0030);border-color:#E040FB"><div style="width:60%;height:3px;background:#E040FB;border-radius:2px;margin-bottom:3px"></div><div style="width:80%;height:2px;background:#FF80AB;opacity:.5;border-radius:2px"></div></div>
+            <span>Vibrante</span>
+          </div>
+          <div class="style-card" data-style="corporativo" onclick="setStyle(this,'corporativo')">
+            <div class="style-preview" style="background:linear-gradient(135deg,#001830,#002448);border-color:#4A90D9"><div style="width:60%;height:3px;background:#4A90D9;border-radius:2px;margin-bottom:3px"></div><div style="width:80%;height:2px;background:#7BB3E8;opacity:.5;border-radius:2px"></div></div>
+            <span>Corporativo</span>
+          </div>
+          <div class="style-card" data-style="natural" onclick="setStyle(this,'natural')">
+            <div class="style-preview" style="background:linear-gradient(135deg,#001A0F,#002A18);border-color:#00E676"><div style="width:60%;height:3px;background:#00E676;border-radius:2px;margin-bottom:3px"></div><div style="width:80%;height:2px;background:#69F0AE;opacity:.5;border-radius:2px"></div></div>
+            <span>Natural</span>
           </div>
         </div>
       </div>
@@ -196,6 +239,7 @@ svg.mm{width:100%;height:100%;min-height:400px}
   <div class="panel">
     <div class="tabs">
       <div class="tab on-m" id="tm" onclick="goTab('mind')">🧠 Mapa Mental</div>
+      <div class="tab" id="tc" onclick="goTab('concept')">🗂️ Mapa Conceptual</div>
       <div class="tab" id="ts" onclick="goTab('slide')">📊 Presentación</div>
     </div>
 
@@ -219,6 +263,30 @@ svg.mm{width:100%;height:100%;min-height:400px}
         </div>
         <div class="mm-box" id="mw">
           <svg class="mm" id="ms" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONCEPT PANE -->
+    <div class="pane" id="pc">
+      <div class="empty" id="ec">
+        <div class="empty-ic">🗂️</div>
+        <p>El mapa conceptual aparecerá aquí.<br>Sube un archivo o escribe texto y presiona <strong>Generar</strong>.</p>
+      </div>
+      <div class="spin-wrap" id="lc" style="display:none">
+        <div class="spin m"></div>
+        <div class="spin-msg" id="lcm">Estructurando conceptos...</div>
+      </div>
+      <div id="cc" style="display:none;flex:1;flex-direction:column">
+        <div class="toolbar">
+          <span class="toolbar-t" id="ct"></span>
+          <div class="xbtns">
+            <button class="xb m" onclick="exportConceptSVG()">↓ SVG</button>
+            <button class="xb m" onclick="exportConceptPNG()">↓ PNG</button>
+          </div>
+        </div>
+        <div class="mm-box" id="cw">
+          <svg class="mm" id="cs" xmlns="http://www.w3.org/2000/svg"></svg>
         </div>
       </div>
     </div>
@@ -262,6 +330,7 @@ const GROQ_KEY = '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';
 
 // ─── ESTADO ────────────────────────────────────────────────────────────────────
 let mode      = 'mind';
+let slideStyle = 'elegante';
 let fileObj   = null;
 let lastMind  = null;
 let lastSlides = null;
@@ -291,12 +360,21 @@ function setFile(f) {
 function setMode(m) {
   mode = m;
   $('bm').className = 'mode' + (m === 'mind' ? ' on-m' : '');
+  $('bc').className = 'mode' + (m === 'concept' ? ' on-m' : '');
   $('bs').className = 'mode' + (m === 'slide' ? ' on-s' : '');
+  $('styleSection').style.display = m === 'slide' ? 'block' : 'none';
+}
+function setStyle(el, style) {
+  slideStyle = style;
+  document.querySelectorAll('.style-card').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
 }
 function goTab(t) {
   $('tm').className = 'tab' + (t === 'mind' ? ' on-m' : '');
+  $('tc').className = 'tab' + (t === 'concept' ? ' on-m' : '');
   $('ts').className = 'tab' + (t === 'slide' ? ' on-s' : '');
   $('pm').className = 'pane' + (t === 'mind' ? ' on' : '');
+  $('pc').className = 'pane' + (t === 'concept' ? ' on' : '');
   $('ps').className = 'pane' + (t === 'slide' ? ' on' : '');
 }
 
@@ -367,6 +445,7 @@ async function go() {
 
   try {
     if (mode === 'mind') await genMind(txt);
+    else if (mode === 'concept') await genConcept(txt);
     else await genSlides(txt);
   } catch (e) {
     toast('❌ ' + e.message, 6000);
@@ -389,7 +468,9 @@ async function genMind(txt) {
 
   $('lmm').textContent = 'Gemini analizando...';
 
-  const prompt = `Analiza el contenido y genera un mapa mental en JSON. Detecta el tema y adapta los colores:
+  const prompt = `IMPORTANTE: Analiza CUIDADOSAMENTE el contenido proporcionado. El mapa mental DEBE ser sobre ese tema específico, no sobre un tema genérico.
+
+Genera un mapa mental en JSON. Detecta el tema real del contenido y adapta los colores:
 
 - Religión/Iglesia/Biblia/Espiritual → root:"#B8860B", branches:["#DAA520","#CD853F","#8B6914","#A0522D","#6B4423","#9B7B3D"], theme:"religion"
 - Ciencia/Tecnología/Ingeniería → root:"#1E40AF", branches:["#3B82F6","#06B6D4","#6366F1","#0EA5E9","#14B8A6","#8B5CF6"], theme:"science"
@@ -398,10 +479,11 @@ async function genMind(txt) {
 - Arte/Literatura/Cultura → root:"#4C1D95", branches:["#7C3AED","#9333EA","#A855F7","#C026D3","#DB2777","#E11D48"], theme:"art"
 - General → root:"#7c6ef7", branches:["#7c6ef7","#34d399","#f97316","#60a5fa","#f472b6","#a78bfa"], theme:"general"
 
-REGLAS:
-- root: tema principal máx 3 palabras
-- 5-6 branches, cada una 2-4 children de máx 5 palabras
-- Textos CORTOS y directos
+REGLAS ESTRICTAS:
+- root: el tema REAL del contenido (máx 3 palabras) — NO pongas "Educación" ni términos genéricos si el tema es otro
+- 5-6 branches directamente relacionadas con el contenido dado
+- Cada branch: 2-4 children específicos del tema (máx 5 palabras c/u)
+- Textos CORTOS pero ESPECÍFICOS al contenido
 - Responde SOLO JSON válido sin backticks ni texto extra
 
 {"root":"Tema","color":"#COLOR","theme":"religion","branches":[{"label":"Rama","color":"#COLOR","children":["hijo1","hijo2"]}]}`;
@@ -509,7 +591,18 @@ async function genSlides(txt) {
   $('lsm').textContent = 'Leyendo archivo...';
 
   const parts = await buildParts(txt);
-  $('lsm').textContent = 'Gemini analizando...';
+  $('lsm').textContent = 'Groq analizando...';
+
+  const estiloDesc = {
+    elegante:    'Elegante y sofisticado: tipografía serif para citas, fondos oscuros profundos, acentos dorados o premium. Apropiado para temas formales, religiosos, históricos.',
+    moderno:     'Moderno y tecnológico: fondos muy oscuros casi negros, acentos neón vibrantes (cyan, azul eléctrico). Apropiado para ciencia, tech, innovación.',
+    minimalista: 'Minimalista y limpio: fondos casi negros puros, tipografía blanca, una sola línea de acento delgada. Máxima legibilidad.',
+    vibrante:    'Vibrante y creativo: gradientes púrpura/magenta, contrastes fuertes. Apropiado para arte, cultura, creatividad.',
+    corporativo: 'Corporativo y profesional: azules navy profundos, acentos azul claro, estructura ordenada. Apropiado para negocios, educación formal.',
+    natural:     'Natural y orgánico: verdes profundos, acentos verde esmeralda. Apropiado para salud, biología, medio ambiente, bienestar.'
+  };
+  const estiloElegido = slideStyle || 'elegante';
+  const estiloInfo = estiloDesc[estiloElegido];
 
   const prompt = `Analiza el contenido y crea una presentación educativa/académica de alta calidad en JSON.
 
@@ -641,6 +734,141 @@ function showDetail(card, s, p, i) {
     pts.appendChild(d);
   });
   $('sd').classList.add('on');
+}
+
+// ─── MAPA CONCEPTUAL ─────────────────────────────────────────────────────────
+async function genConcept(txt) {
+  $('ec').style.display = 'none';
+  $('cc').style.display = 'none';
+  $('lc').style.display = 'flex';
+  $('lcm').textContent = 'Analizando contenido...';
+  goTab('concept');
+
+  const parts = await buildParts(txt);
+  $('lcm').textContent = 'Groq estructurando...';
+
+  const prompt = `IMPORTANTE: Analiza CUIDADOSAMENTE el contenido dado. El mapa conceptual DEBE ser sobre ese tema específico.
+
+Genera un mapa conceptual jerárquico en JSON. Un mapa conceptual tiene:
+- Nodos con conceptos clave (sustantivos o frases nominales)
+- Relaciones etiquetadas entre nodos (verbos o preposiciones: "es un", "tiene", "produce", "se divide en", "permite", "causa", etc.)
+- Estructura jerárquica de arriba hacia abajo (no radial)
+
+REGLAS:
+- concept_root: concepto principal del contenido dado (máx 3 palabras)
+- 3-5 nodos de nivel 1 directamente conectados al root
+- Cada nodo nivel 1 puede tener 2-3 nodos de nivel 2
+- Cada relación debe tener una etiqueta de conector significativa
+- Colores según tema: religión=#B8860B, ciencia=#1E40AF, historia=#7C2D12, salud=#065F46, arte=#4C1D95, general=#7c6ef7
+- Responde SOLO JSON sin backticks
+
+{"root":"Concepto Central","color":"#7c6ef7","theme":"general","nodes":[
+  {"id":"n1","label":"Concepto A","color":"#34d399","relation":"se divide en","children":[
+    {"id":"n1a","label":"Sub A1","relation":"incluye"},
+    {"id":"n1b","label":"Sub A2","relation":"contiene"}
+  ]},
+  {"id":"n2","label":"Concepto B","color":"#f97316","relation":"produce","children":[
+    {"id":"n2a","label":"Sub B1","relation":"es un tipo de"}
+  ]}
+]}`;
+
+  const raw = await callGemini(parts, prompt);
+  const data = JSON.parse(raw);
+  $('lcm').textContent = 'Dibujando mapa conceptual...';
+  drawConcept(data);
+  $('lc').style.display = 'none';
+  $('cc').style.display = 'flex';
+  $('ct').textContent = data.root;
+}
+
+function drawConcept(d) {
+  const svg = $('cs'), wrap = $('cw');
+  const W = wrap.offsetWidth || 700;
+  const H = Math.max(500, wrap.offsetHeight || 500);
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML = '';
+
+  const bgMap = { religion:'#100C00', science:'#020B18', history:'#120800', health:'#001208', art:'#0C0018', general:'#0D0D0D' };
+  svg.appendChild(elSvg('rect', { x:0, y:0, width:W, height:H, fill: bgMap[d.theme] || '#0D0D0D' }));
+
+  const nodes = d.nodes || [];
+  const rootColor = d.color || '#7c6ef7';
+  const rootW = 120, rootH = 36;
+  const rootX = W/2 - rootW/2, rootY = 30;
+  const rootCX = W/2, rootCY = rootY + rootH/2;
+
+  // Layout nivel 1
+  const n1Count = nodes.length;
+  const n1SpacingX = Math.min((W - 80) / Math.max(n1Count, 1), 200);
+  const n1StartX = W/2 - (n1Count - 1) * n1SpacingX / 2;
+  const n1Y = 130;
+
+  // Dibujar root
+  svg.appendChild(elSvg('rect', { x:rootX, y:rootY, width:rootW, height:rootH, rx:'10', fill:rootColor }));
+  svg.appendChild(elSvg('text', { x:rootCX, y:rootCY, 'text-anchor':'middle', 'dominant-baseline':'middle', fill:'#fff', 'font-family':'Syne,sans-serif', 'font-weight':'800', 'font-size':'12' }, trunc(d.root, 16)));
+
+  nodes.forEach((node, i) => {
+    const nx = n1StartX + i * n1SpacingX;
+    const nCX = nx, nCY = n1Y + 18;
+    const nColor = node.color || rootColor;
+    const nW = 100, nH = 30;
+
+    // Línea root→n1 con etiqueta
+    const midY = (rootCY + nCY) / 2;
+    svg.appendChild(elSvg('line', { x1:rootCX, y1:rootCY+rootH/2, x2:nCX, y2:nCY-nH/2, stroke:nColor, 'stroke-width':'1.2', opacity:'0.5' }));
+    // Etiqueta de relación
+    const relX = (rootCX + nCX)/2, relY = (rootCY + nH/2 + nCY - nH/2)/2;
+    svg.appendChild(elSvg('rect', { x:relX-28, y:relY-9, width:56, height:16, rx:'8', fill:'#1a1a1a' }));
+    svg.appendChild(elSvg('text', { x:relX, y:relY, 'text-anchor':'middle', 'dominant-baseline':'middle', fill:nColor, 'font-family':'Plus Jakarta Sans,sans-serif', 'font-size':'7.5', 'font-style':'italic' }, trunc(node.relation||'', 10)));
+
+    // Nodo nivel 1
+    svg.appendChild(elSvg('rect', { x:nCX-nW/2, y:nCY-nH/2, width:nW, height:nH, rx:'8', fill:nColor }));
+    svg.appendChild(elSvg('text', { x:nCX, y:nCY, 'text-anchor':'middle', 'dominant-baseline':'middle', fill:'#fff', 'font-family':'Syne,sans-serif', 'font-weight':'700', 'font-size':'10' }, trunc(node.label, 13)));
+
+    // Hijos nivel 2
+    const children = node.children || [];
+    const chSpacing = Math.min(90, (W/2) / Math.max(children.length, 1));
+    const chStartX = nCX - (children.length - 1) * chSpacing / 2;
+    const chY = n1Y + 110;
+
+    children.forEach((ch, j) => {
+      const chX = chStartX + j * chSpacing;
+      const chCY = chY + 13;
+      const chW = 80, chH = 26;
+      const chColor = nColor;
+
+      svg.appendChild(elSvg('line', { x1:nCX, y1:nCY+nH/2, x2:chX, y2:chCY-chH/2, stroke:chColor, 'stroke-width':'1', opacity:'0.35' }));
+      // Etiqueta relación nivel 2
+      const rX = (nCX+chX)/2, rY = (nCY+nH/2 + chCY-chH/2)/2;
+      svg.appendChild(elSvg('rect', { x:rX-24, y:rY-7, width:48, height:13, rx:'6', fill:'#111' }));
+      svg.appendChild(elSvg('text', { x:rX, y:rY, 'text-anchor':'middle', 'dominant-baseline':'middle', fill:chColor, 'font-family':'Plus Jakarta Sans,sans-serif', 'font-size':'6.5', 'font-style':'italic' }, trunc(ch.relation||'', 9)));
+
+      svg.appendChild(elSvg('rect', { x:chX-chW/2, y:chCY-chH/2, width:chW, height:chH, rx:'6', fill:'rgba(0,0,0,0)', stroke:chColor, 'stroke-width':'1' }));
+      svg.appendChild(elSvg('text', { x:chX, y:chCY, 'text-anchor':'middle', 'dominant-baseline':'middle', fill:chColor, 'font-family':'Plus Jakarta Sans,sans-serif', 'font-size':'8.5', 'font-weight':'500' }, trunc(ch.label, 11)));
+    });
+  });
+}
+
+function elSvg(tag, attrs, txt) {
+  const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k,v] of Object.entries(attrs)) e.setAttribute(k,v);
+  if (txt !== undefined) e.textContent = txt;
+  return e;
+}
+function trunc(s, n) { return s && s.length > n ? s.slice(0,n)+'…' : s; }
+
+function exportConceptSVG() {
+  const s = new XMLSerializer().serializeToString($('cs'));
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([s],{type:'image/svg+xml'})), download:'TesJuaMap-conceptual.svg' });
+  a.click(); toast('✅ SVG exportado');
+}
+function exportConceptPNG() {
+  const svg=$('cs'), vb=svg.getAttribute('viewBox').split(' ');
+  const canvas=document.createElement('canvas');
+  canvas.width=parseInt(vb[2])*2; canvas.height=parseInt(vb[3])*2;
+  const img=new Image();
+  img.onload=()=>{canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);const a=Object.assign(document.createElement('a'),{href:canvas.toDataURL('image/png'),download:'TesJuaMap-conceptual.png'});a.click();toast('✅ PNG exportado');};
+  img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(new XMLSerializer().serializeToString(svg))));
 }
 
 // ─── EXPORT PPTX ─────────────────────────────────────────────────────────────
