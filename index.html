@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TesJuaMap — by JZ</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PptxGenJS/3.12.0/pptxgen.bundled.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;--s1:#111;--s2:#181818;--s3:#222;
+  --b1:#1e1e1e;--b2:#2a2a2a;--b3:#333;
+  --t1:#f0f0f0;--t2:#a0a0a0;--t3:#555;
+  --acc:#7c6ef7;--acc2:#34d399;--acc3:#f97316;
+  --fh:'Syne',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;--fc:'Cormorant Garamond',serif;
+  --r:10px;--r2:16px;--r3:22px;
+}
+html,body{height:100%;font-family:var(--fb);background:var(--bg);color:var(--t1)}
+
+/* ── TOPBAR ── */
+.topbar{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--b1);flex-shrink:0;background:var(--s1)}
+.logo{font-family:var(--fh);font-size:1.15rem;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:8px;cursor:default}
+.logo-gem{width:22px;height:22px;background:var(--acc);clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%);flex-shrink:0}
+.logo em{color:var(--acc);font-style:normal}
+.logo small{color:var(--t3);font-size:.62rem;font-weight:400;margin-left:2px;letter-spacing:.06em}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.admin-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--b3);border-radius:var(--r);cursor:pointer;background:transparent;color:var(--t2);font-size:.72rem;font-family:var(--fh);font-weight:600;letter-spacing:.04em;transition:all .2s}
+.admin-btn:hover{border-color:var(--acc);color:var(--acc)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#2a2a2a}
+.status-dot.ok{background:var(--acc2);box-shadow:0 0 6px rgba(52,211,153,.5)}
+
+/* ── LAYOUT ── */
+.app{display:flex;height:calc(100vh - 54px)}
+.sidebar{width:290px;flex-shrink:0;border-right:1px solid var(--b1);display:flex;flex-direction:column;background:var(--s1);overflow-y:auto}
+.panel{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+
+/* ── SIDEBAR INNER ── */
+.sb-pad{padding:16px;display:flex;flex-direction:column;gap:14px}
+.lbl{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
+
+/* ── DROP ZONE ── */
+.dz{border:1px dashed var(--b3);border-radius:var(--r2);padding:18px 14px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:var(--s2)}
+.dz:hover,.dz.over{border-color:var(--acc);background:#0e0c1e}
+.dz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dz-ic{width:38px;height:38px;border-radius:10px;background:var(--s3);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:17px}
+.dz-t{font-size:.8rem;font-weight:600;color:var(--t1);margin-bottom:3px}
+.dz-s{font-size:.68rem;color:var(--t3);line-height:1.5}
+.dz-f{font-size:.7rem;color:var(--acc2);font-weight:500;margin-top:6px;display:none;line-height:1.4;word-break:break-all}
+
+/* ── DIVIDER ── */
+.div{display:flex;align-items:center;gap:8px;font-size:.68rem;color:var(--t3)}
+.div::before,.div::after{content:'';flex:1;height:1px;background:var(--b2)}
+
+/* ── TEXTAREA ── */
+textarea{width:100%;height:100px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:10px 12px;color:var(--t1);font-size:.78rem;font-family:var(--fb);resize:none;outline:none;line-height:1.6;transition:border-color .2s}
+textarea:focus{border-color:var(--acc)}
+textarea::placeholder{color:var(--t3)}
+
+/* ── MODE SELECTOR ── */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mode{border:1px solid var(--b2);border-radius:var(--r);padding:11px 8px;cursor:pointer;background:var(--s2);transition:all .15s;text-align:center}
+.mode:hover{background:var(--s3)}
+.mode.on-m{border-color:var(--acc);background:#0e0c1e}
+.mode.on-s{border-color:var(--acc2);background:#05140e}
+.mode-ic{font-size:1.25rem;margin-bottom:4px;display:block}
+.mode-lb{font-size:.72rem;font-weight:600;color:var(--t2)}
+.mode.on-m .mode-lb{color:var(--acc)}
+.mode.on-s .mode-lb{color:var(--acc2)}
+
+/* ── GEN BTN ── */
+.gbtn{width:100%;padding:12px;border-radius:var(--r);border:none;cursor:pointer;font-family:var(--fh);font-size:.88rem;font-weight:700;letter-spacing:.04em;transition:all .2s;background:linear-gradient(135deg,var(--acc),#5b4fd4);color:#fff;position:relative;overflow:hidden}
+.gbtn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,.06));pointer-events:none}
+.gbtn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(124,110,247,.3)}
+.gbtn:active{transform:translateY(0)}
+.gbtn:disabled{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ── CREDITS ── */
+.credits{font-size:.66rem;color:var(--t3);text-align:center;line-height:1.6}
+.credits a{color:var(--acc);text-decoration:none}
+
+/* ── TABS ── */
+.tabs{display:flex;border-bottom:1px solid var(--b1);background:var(--s1);flex-shrink:0;height:44px}
+.tab{padding:0 20px;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;transition:all .15s;font-family:var(--fh);letter-spacing:.03em;display:flex;align-items:center;gap:6px}
+.tab.on{color:var(--t1);border-bottom-color:var(--acc)}
+.tab.on-s{color:var(--t1);border-bottom-color:var(--acc2)}
+
+/* ── PANES ── */
+.pane{flex:1;padding:22px;display:none;flex-direction:column;overflow:auto}
+.pane.on{display:flex}
+
+/* ── EMPTY ── */
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+.empty-ic{width:56px;height:56px;border-radius:16px;background:var(--s2);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:24px}
+.empty p{font-size:.8rem;color:var(--t3);max-width:250px;line-height:1.7}
+.empty strong{color:var(--t2)}
+
+/* ── SPINNER ── */
+.spin-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.spin{width:34px;height:34px;border:2px solid var(--b2);border-top-color:var(--acc);border-radius:50%;animation:spin .7s linear infinite}
+.spin.g{border-top-color:var(--acc2)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin-msg{font-size:.78rem;color:var(--t2);font-weight:500;font-family:var(--fh)}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;flex-shrink:0}
+.toolbar-t{font-family:var(--fh);font-size:.95rem;font-weight:700}
+.xbtns{display:flex;gap:8px}
+.xb{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--r);font-size:.72rem;font-weight:600;cursor:pointer;border:1px solid;transition:all .15s;font-family:var(--fh);letter-spacing:.03em}
+.xb.m{border-color:var(--acc);color:var(--acc);background:transparent}
+.xb.m:hover{background:#0e0c1e}
+.xb.s{border-color:var(--acc2);color:var(--acc2);background:transparent}
+.xb.s:hover{background:#05140e}
+
+/* ── MIND MAP ── */
+.mm-box{flex:1;min-height:420px;border:1px solid var(--b2);border-radius:var(--r2);background:var(--s1);overflow:hidden;position:relative}
+svg.mm{width:100%;height:100%;min-height:420px}
+
+/* ── SLIDES GRID ── */
+.slides-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.scard{border-radius:var(--r);overflow:hidden;border:1px solid var(--b2);cursor:pointer;aspect-ratio:16/9;transition:all .15s;position:relative}
+.scard:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.scard.sel{box-shadow:0 0 0 2px var(--sel-color,var(--acc2))}
+.sn{position:absolute;bottom:4px;right:7px;font-size:.52rem;font-weight:700;opacity:.25;font-family:var(--fh)}
+
+/* ── SLIDE DETAIL ── */
+.detail{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);padding:18px;margin-top:16px;display:none;gap:16px}
+.detail.on{display:flex}
+.dp{width:260px;flex-shrink:0;border-radius:var(--r);overflow:hidden;border:1px solid var(--b2);aspect-ratio:16/9}
+.di h3{font-family:var(--fh);font-size:.95rem;font-weight:700;margin-bottom:6px}
+.di p{font-size:.78rem;color:var(--t2);line-height:1.7}
+.dpts{margin-top:10px;display:flex;flex-direction:column;gap:5px}
+.dpt{font-size:.76rem;color:var(--t2);display:flex;align-items:flex-start;gap:6px;line-height:1.5}
+.dpt::before{content:'›';color:var(--acc2);font-weight:700;flex-shrink:0;margin-top:1px}
+
+/* ── ADMIN MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center}
+.modal-bg.on{display:flex}
+.modal{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r3);padding:28px;width:400px;max-width:95vw}
+.modal h2{font-family:var(--fh);font-size:1rem;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.modal h2 span{width:8px;height:8px;border-radius:50%;background:var(--acc);display:inline-block}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
+.field input{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:9px 12px;color:var(--t1);font-size:.82rem;font-family:var(--fb);outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--acc)}
+.field input::placeholder{color:var(--t3)}
+.modal-btns{display:flex;gap:8px;margin-top:6px}
+.modal-btn{flex:1;padding:10px;border-radius:var(--r);border:none;cursor:pointer;font-family:var(--fh);font-size:.8rem;font-weight:700;letter-spacing:.03em;transition:all .15s}
+.modal-btn.pri{background:var(--acc);color:#fff}
+.modal-btn.pri:hover{opacity:.88}
+.modal-btn.sec{background:var(--s3);color:var(--t2)}
+.modal-btn.sec:hover{background:var(--b2)}
+.admin-info{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:12px;margin-bottom:14px;display:none}
+.admin-info.on{display:block}
+.admin-info p{font-size:.75rem;color:var(--t2);margin-bottom:4px}
+.admin-info p strong{color:var(--t1)}
+.admin-sep{height:1px;background:var(--b2);margin:14px 0}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:16px;right:16px;background:var(--s3);color:var(--t1);border:1px solid var(--b3);padding:10px 16px;border-radius:var(--r);font-size:.78rem;font-weight:500;z-index:999;transform:translateY(80px);transition:transform .3s;pointer-events:none;max-width:300px;line-height:1.4}
+.toast.on{transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-gem"></div>
+    TesJua<em>Map</em><small>by JZ</small>
+  </div>
+  <div class="topbar-right">
+    <div class="status-dot" id="statusDot" title="Estado del servidor"></div>
+    <button class="admin-btn" onclick="openAdmin()">⚙ Admin</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-pad">
+
+      <!-- UPLOAD -->
+      <div>
+        <div class="lbl">Sube tu contenido</div>
+        <div class="dz" id="dz">
+          <div class="dz-ic">📄</div>
+          <div class="dz-t">Arrastra o haz clic</div>
+          <div class="dz-s">PDF · Word · JPG · PNG</div>
+          <input type="file" id="fi" accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.webp">
+          <div class="dz-f" id="fn"></div>
+        </div>
+      </div>
+
+      <div class="div">o escribe texto</div>
+
+      <!-- TEXTAREA -->
+      <textarea id="txt" placeholder="Pega apuntes, versículos, resumen del tema..."></textarea>
+
+      <!-- MODE -->
+      <div>
+        <div class="lbl">¿Qué generar?</div>
+        <div class="modes">
+          <div class="mode on-m" id="bm" onclick="setMode('mind')">
+            <span class="mode-ic">🧠</span>
+            <span class="mode-lb">Mapa mental</span>
+          </div>
+          <div class="mode" id="bs" onclick="setMode('slide')">
+            <span class="mode-ic">📊</span>
+            <span class="mode-lb">Presentación</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BTN -->
+      <button class="gbtn" id="gb" onclick="go()">✦ Generar</button>
+
+      <div class="credits">
+        Powered by <a href="https://aistudio.google.com/apikey" target="_blank">Gemini 2.0</a> · TesJua · JZ
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PANEL -->
+  <div class="panel">
+    <div class="tabs">
+      <div class="tab on" id="tm" onclick="goTab('mind')">🧠 Mapa Mental</div>
+      <div class="tab" id="ts" onclick="goTab('slide')">📊 Presentación</div>
+    </div>
+
+    <!-- MIND PANE -->
+    <div class="pane on" id="pm">
+      <div class="empty" id="em">
+        <div class="empty-ic">🗺️</div>
+        <p>El mapa mental aparecerá aquí.<br>Sube un archivo o escribe texto y presiona <strong>Generar</strong>.</p>
+      </div>
+      <div class="spin-wrap" id="lm" style="display:none">
+        <div class="spin"></div>
+        <div class="spin-msg" id="lmm">Analizando contenido...</div>
+      </div>
+      <div id="mc" style="display:none;flex:1;flex-direction:column">
+        <div class="toolbar">
+          <span class="toolbar-t" id="mt"></span>
+          <div class="xbtns">
+            <button class="xb m" onclick="exportMapSVG()">↓ SVG</button>
+            <button class="xb m" onclick="exportMapPNG()">↓ PNG</button>
+          </div>
+        </div>
+        <div class="mm-box" id="mw">
+          <svg class="mm" id="ms" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDES PANE -->
+    <div class="pane" id="ps">
+      <div class="empty" id="es">
+        <div class="empty-ic">📽️</div>
+        <p>La presentación aparecerá aquí.<br>Selecciona el modo <strong>Presentación</strong> y genera.</p>
+      </div>
+      <div class="spin-wrap" id="ls" style="display:none">
+        <div class="spin g"></div>
+        <div class="spin-msg" id="lsm">Estructurando diapositivas...</div>
+      </div>
+      <div id="sc" style="display:none">
+        <div class="toolbar">
+          <span class="toolbar-t" id="sct"></span>
+          <button class="xb s" onclick="exportPPTX()">↓ Exportar .pptx</button>
+        </div>
+        <div class="slides-grid" id="sg"></div>
+        <div class="detail" id="sd">
+          <div class="dp" id="sdp"></div>
+          <div class="di">
+            <h3 id="dh"></h3>
+            <p id="db"></p>
+            <div class="dpts" id="dpts"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="modal-bg" id="adminModal">
+  <div class="modal">
+    <h2><span></span> Panel Admin · TesJuaMap</h2>
+
+    <!-- LOGIN -->
+    <div id="loginSection">
+      <div class="field">
+        <label>Usuario</label>
+        <input type="text" id="adminUser" placeholder="Tesla">
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="adminPass" placeholder="••••••••">
+      </div>
+      <div class="modal-btns">
+        <button class="modal-btn sec" onclick="closeAdmin()">Cancelar</button>
+        <button class="modal-btn pri" onclick="doLogin()">Entrar</button>
+      </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="adminPanel" style="display:none">
+      <div class="admin-info on" id="adminStatus"></div>
+      <div class="admin-sep"></div>
+      <div class="field">
+        <label>URL del Backend</label>
+        <input type="text" id="backendUrl" placeholder="https://tu-app.railway.app">
+      </div>
+      <div class="field">
+        <label>Actualizar Gemini API Key</label>
+        <input type="password" id="newApiKey" placeholder="AIzaSy...">
+      </div>
+      <div class="modal-btns">
+        <button class="modal-btn sec" onclick="closeAdmin()">Cerrar</button>
+        <button class="modal-btn pri" onclick="saveAdmin()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ────────────────────────────────────────────────────────────────────
+let BACKEND = localStorage.getItem('tjm_backend') || 'http://localhost:3001';
+let authToken = localStorage.getItem('tjm_token') || null;
+let mode = 'mind';
+let fileObj = null;
+let lastMind = null;
+let lastSlides = null;
+
+// ─── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  checkStatus();
+  if (authToken) verifyToken();
+});
+
+async function checkStatus() {
+  try {
+    const r = await fetch(BACKEND + '/');
+    if (r.ok) document.getElementById('statusDot').classList.add('ok');
+  } catch { /* offline */ }
+}
+
+async function verifyToken() {
+  try {
+    const r = await fetch(BACKEND + '/api/verify', { headers: { Authorization: 'Bearer ' + authToken } });
+    if (!r.ok) { authToken = null; localStorage.removeItem('tjm_token'); }
+  } catch {}
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+function toast(msg, dur = 3500) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), dur);
+}
+function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+// ─── FILE ─────────────────────────────────────────────────────────────────────
+const dz = $('dz'), fi = $('fi');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('over'); if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
+fi.addEventListener('change', () => { if (fi.files[0]) setFile(fi.files[0]); });
+function setFile(f) {
+  fileObj = f;
+  $('fn').style.display = 'block';
+  $('fn').textContent = '📎 ' + f.name;
+}
+
+// ─── MODE & TAB ───────────────────────────────────────────────────────────────
+function setMode(m) {
+  mode = m;
+  $('bm').className = 'mode' + (m === 'mind' ? ' on-m' : '');
+  $('bs').className = 'mode' + (m === 'slide' ? ' on-s' : '');
+}
+function goTab(t) {
+  $('tm').className = 'tab' + (t === 'mind' ? ' on' : '');
+  $('ts').className = 'tab' + (t === 'slide' ? ' on-s' : '');
+  $('pm').className = 'pane' + (t === 'mind' ? ' on' : '');
+  $('ps').className = 'pane' + (t === 'slide' ? ' on' : '');
+}
+
+// ─── GENERATE ─────────────────────────────────────────────────────────────────
+async function go() {
+  const txt = $('txt').value.trim();
+  if (!fileObj && !txt) { toast('⚠️ Sube un archivo o escribe algo'); return; }
+
+  $('gb').disabled = true;
+  $('gb').textContent = '⏳ Generando...';
+  goTab(mode);
+
+  try {
+    if (mode === 'mind') await genMind(txt);
+    else await genSlides(txt);
+  } catch (e) {
+    toast('❌ ' + e.message, 5000);
+  }
+  $('gb').disabled = false;
+  $('gb').textContent = '✦ Generar';
+}
+
+async function buildFormData(txt) {
+  const fd = new FormData();
+  if (fileObj) fd.append('file', fileObj);
+  if (txt) fd.append('text', txt);
+  return fd;
+}
+
+// ─── MIND MAP ─────────────────────────────────────────────────────────────────
+async function genMind(txt) {
+  $('em').style.display = 'none';
+  $('mc').style.display = 'none';
+  $('lm').style.display = 'flex';
+  $('lmm').textContent = 'Analizando contenido...';
+
+  const fd = await buildFormData(txt);
+  $('lmm').textContent = 'Gemini procesando...';
+
+  const res = await fetch(BACKEND + '/api/generate/mindmap', { method: 'POST', body: fd });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'Error del servidor');
+
+  lastMind = json.data;
+  $('lmm').textContent = 'Dibujando mapa...';
+  drawMind(lastMind);
+  $('lm').style.display = 'none';
+  $('mc').style.display = 'flex';
+  $('mt').textContent = lastMind.root;
+}
+
+function drawMind(d) {
+  const svg = $('ms'), wrap = $('mw');
+  const W = wrap.offsetWidth || 700, H = Math.max(480, wrap.offsetHeight || 480);
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML = '';
+
+  // Theme background
+  const theme = d.theme || 'general';
+  const bgColors = {
+    religion: '#100C00', science: '#020B18', history: '#120800',
+    health: '#001208', art: '#0C0018', general: '#0D0D0D'
+  };
+  svg.appendChild(el('rect', { x: 0, y: 0, width: W, height: H, fill: bgColors[theme] || '#0D0D0D' }));
+
+  const cx = W / 2, cy = H / 2;
+  const branches = d.branches || [];
+  const n = branches.length;
+  const step = (Math.PI * 2) / n;
+  const br = Math.min(W, H) * .29;
+  const cr = Math.min(W, H) * .45;
+
+  function el(tag, attrs, txt) {
+    const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    if (txt !== undefined) e.textContent = txt;
+    return e;
+  }
+  function trunc(s, n) { return s && s.length > n ? s.slice(0, n) + '…' : s; }
+  function hex2rgba(h, a) {
+    const r = parseInt(h.slice(1, 3), 16), g = parseInt(h.slice(3, 5), 16), b = parseInt(h.slice(5, 7), 16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+
+  branches.forEach((b, i) => {
+    const angle = step * i - Math.PI / 2;
+    const bx = cx + Math.cos(angle) * br, by = cy + Math.sin(angle) * br;
+    const color = b.color || '#7c6ef7';
+
+    // Curved connector root→branch
+    const mx = (cx + bx) / 2 + 25 * Math.cos(angle + 1.5);
+    const my = (cy + by) / 2 + 25 * Math.sin(angle + 1.5);
+    svg.appendChild(el('path', { d: `M${cx},${cy} Q${mx},${my} ${bx},${by}`, stroke: color, 'stroke-width': '1.5', fill: 'none', opacity: '0.5' }));
+
+    // Branch pill
+    svg.appendChild(el('rect', { x: bx - 45, y: by - 15, width: 90, height: 30, rx: '15', fill: color }));
+    svg.appendChild(el('text', { x: bx, y: by, 'text-anchor': 'middle', 'dominant-baseline': 'middle', fill: '#fff', 'font-family': 'Syne,sans-serif', 'font-weight': '700', 'font-size': '10.5' }, trunc(b.label, 13)));
+
+    // Children
+    const ch = b.children || [];
+    const sp = Math.min(.6, ch.length * .15);
+    ch.forEach((c, j) => {
+      const ca = angle + (ch.length > 1 ? sp * (j / (ch.length - 1) - .5) * 2 : 0);
+      const r2 = cr + (j % 2 ? 22 : 0);
+      const chx = cx + Math.cos(ca) * r2, chy = cy + Math.sin(ca) * r2;
+
+      svg.appendChild(el('line', { x1: bx, y1: by, x2: chx, y2: chy, stroke: color, 'stroke-width': '1', opacity: '0.25' }));
+      svg.appendChild(el('rect', { x: chx - 38, y: chy - 12, width: 76, height: 24, rx: '12', fill: hex2rgba(color, .13), stroke: color, 'stroke-width': '0.8' }));
+      svg.appendChild(el('text', { x: chx, y: chy, 'text-anchor': 'middle', 'dominant-baseline': 'middle', fill: color, 'font-family': 'Plus Jakarta Sans,sans-serif', 'font-size': '9', 'font-weight': '500' }, trunc(c, 12)));
+    });
+  });
+
+  // Root node
+  svg.appendChild(el('ellipse', { cx, cy, rx: 62, ry: 30, fill: d.color || '#7c6ef7' }));
+  svg.appendChild(el('text', { x: cx, y: cy, 'text-anchor': 'middle', 'dominant-baseline': 'middle', fill: '#fff', 'font-family': 'Syne,sans-serif', 'font-weight': '800', 'font-size': '13' }, trunc(d.root, 18)));
+}
+
+function exportMapSVG() {
+  if (!lastMind) { toast('Genera un mapa primero'); return; }
+  const s = new XMLSerializer().serializeToString($('ms'));
+  const blob = new Blob([s], { type: 'image/svg+xml' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'TesJuaMap-mapa.svg';
+  a.click();
+  toast('✅ Mapa exportado como SVG');
+}
+
+function exportMapPNG() {
+  if (!lastMind) { toast('Genera un mapa primero'); return; }
+  const svg = $('ms');
+  const s = new XMLSerializer().serializeToString(svg);
+  const canvas = document.createElement('canvas');
+  const vb = svg.getAttribute('viewBox').split(' ');
+  canvas.width = parseInt(vb[2]) * 2;
+  canvas.height = parseInt(vb[3]) * 2;
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = 'TesJuaMap-mapa.png';
+    a.click();
+    toast('✅ Mapa exportado como PNG');
+  };
+  img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(s)));
+}
+
+// ─── SLIDES ───────────────────────────────────────────────────────────────────
+async function genSlides(txt) {
+  $('es').style.display = 'none';
+  $('sc').style.display = 'none';
+  $('ls').style.display = 'flex';
+  $('lsm').textContent = 'Analizando contenido...';
+
+  const fd = await buildFormData(txt);
+  $('lsm').textContent = 'Gemini procesando...';
+
+  const res = await fetch(BACKEND + '/api/generate/slides', { method: 'POST', body: fd });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'Error del servidor');
+
+  lastSlides = json.data;
+  $('lsm').textContent = 'Renderizando slides...';
+  renderSlides(lastSlides);
+  $('ls').style.display = 'none';
+  $('sc').style.display = 'block';
+  $('sct').textContent = lastSlides.title + ' · ' + lastSlides.slides.length + ' slides';
+}
+
+function getPalette(data) {
+  return data.palette || {
+    bg: '0D0D0D', accent: '7C6EF7', accent2: '34D399',
+    text: 'F0F0F0', surface: '161616', highlight: 'F97316'
+  };
+}
+
+function slideInlineHTML(s, pal, n, total) {
+  const bg = '#' + pal.bg, acc = '#' + pal.accent, acc2 = '#' + pal.accent2;
+  const txt = '#' + pal.text, surf = '#' + pal.surface, hi = '#' + pal.highlight;
+  const t = s.type || 'content';
+  let inner = '';
+
+  if (t === 'title') {
+    inner = `<div style="width:100%;height:100%;background:${bg};display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:${acc};opacity:.08"></div>
+      <div style="position:absolute;bottom:-15px;left:-15px;width:60px;height:60px;border-radius:50%;background:${acc2};opacity:.08"></div>
+      ${s.icon ? `<div style="font-size:1.1rem;margin-bottom:6px">${s.icon}</div>` : ''}
+      <div style="font-family:Syne,sans-serif;font-weight:800;font-size:.8rem;color:${txt};line-height:1.2;margin-bottom:5px">${esc(s.heading)}</div>
+      <div style="width:30px;height:2px;background:${acc};margin:0 auto 6px"></div>
+      <div style="font-size:.55rem;color:${acc};opacity:.8;line-height:1.4;font-style:italic;font-family:Cormorant Garamond,serif">${esc(s.body || '')}</div>
+    </div>`;
+  } else if (t === 'section') {
+    inner = `<div style="width:100%;height:100%;background:${acc};display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;padding:12px">
+      <div style="font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(0,0,0,.45);margin-bottom:3px;font-family:Syne,sans-serif;font-weight:700">Sección</div>
+      <div style="font-family:Syne,sans-serif;font-weight:800;font-size:.78rem;color:#0a0a0a;line-height:1.2">${esc(s.heading)}</div>
+      ${s.body ? `<div style="font-size:.52rem;color:rgba(0,0,0,.5);margin-top:4px">${esc(s.body)}</div>` : ''}
+    </div>`;
+  } else if (t === 'list') {
+    const pts = (s.points || []).slice(0, 5).map(p =>
+      `<li style="display:flex;align-items:flex-start;gap:4px;font-size:.56rem;color:#ccc;line-height:1.4;margin-bottom:2px"><span style="color:${acc2};flex-shrink:0">›</span>${esc(p)}</li>`
+    ).join('');
+    inner = `<div style="width:100%;height:100%;background:${bg};padding:12px">
+      <div style="font-family:Syne,sans-serif;font-weight:700;font-size:.65rem;color:${acc2};border-bottom:1px solid #222;padding-bottom:5px;margin-bottom:7px">${esc(s.heading)}</div>
+      <ul style="list-style:none">${pts}</ul>
+    </div>`;
+  } else if (t === 'quote') {
+    inner = `<div style="width:100%;height:100%;background:${surf};display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;text-align:center">
+      <div style="font-size:1.2rem;color:${acc};opacity:.3;font-family:serif;line-height:1;margin-bottom:6px">"</div>
+      <div style="font-family:Cormorant Garamond,serif;font-style:italic;font-size:.72rem;color:${txt};line-height:1.5;margin-bottom:6px">${esc(s.text || s.heading || '')}</div>
+      ${s.source ? `<div style="font-size:.52rem;color:${acc};font-weight:700;font-family:Syne,sans-serif;letter-spacing:.06em">${esc(s.source)}</div>` : ''}
+    </div>`;
+  } else if (t === 'end') {
+    inner = `<div style="width:100%;height:100%;background:${bg};display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px">
+      ${s.icon ? `<div style="font-size:1.4rem;margin-bottom:8px">${s.icon}</div>` : ''}
+      <div style="font-family:Syne,sans-serif;font-weight:800;font-size:.82rem;color:${acc2};margin-bottom:5px">${esc(s.heading)}</div>
+      <div style="width:28px;height:2px;background:${acc2};margin:0 auto 6px"></div>
+      <div style="font-size:.55rem;color:${acc2};opacity:.5;line-height:1.5">${esc(s.body || '')}</div>
+      <div style="position:absolute;bottom:5px;right:8px;font-size:.48rem;color:rgba(255,255,255,.1);font-family:Syne,sans-serif">TesJuaMap · JZ</div>
+    </div>`;
+  } else {
+    inner = `<div style="width:100%;height:100%;background:${bg};padding:12px">
+      <div style="font-family:Syne,sans-serif;font-weight:700;font-size:.65rem;color:#fff;border-left:2px solid ${acc};padding-left:7px;margin-bottom:8px">${esc(s.heading)}</div>
+      <div style="font-size:.58rem;color:#999;line-height:1.6">${esc(s.body || '')}</div>
+    </div>`;
+  }
+
+  return inner + `<div class="sn" style="color:rgba(255,255,255,.18)">${n}</div>`;
+}
+
+function renderSlides(data) {
+  const g = $('sg'); g.innerHTML = '';
+  $('sd').classList.remove('on');
+  const pal = getPalette(data);
+
+  data.slides.forEach((s, i) => {
+    const c = document.createElement('div');
+    c.className = 'scard';
+    c.style.setProperty('--sel-color', '#' + pal.accent2);
+    c.innerHTML = slideInlineHTML(s, pal, i + 1, data.slides.length);
+    c.onclick = () => showDetail(c, s, pal, i);
+    g.appendChild(c);
+  });
+}
+
+function showDetail(card, s, pal, i) {
+  document.querySelectorAll('.scard').forEach(c => c.classList.remove('sel'));
+  card.classList.add('sel');
+  $('sdp').innerHTML = slideInlineHTML(s, pal, i + 1, lastSlides.slides.length);
+  $('dh').textContent = s.heading || s.text || '';
+  $('db').textContent = s.body || s.source || '';
+  const pts = $('dpts'); pts.innerHTML = '';
+  (s.points || []).forEach(p => {
+    const d = document.createElement('div');
+    d.className = 'dpt';
+    d.textContent = p;
+    pts.appendChild(d);
+  });
+  $('sd').classList.add('on');
+}
+
+// ─── EXPORT PPTX ──────────────────────────────────────────────────────────────
+async function exportPPTX() {
+  if (!lastSlides) { toast('Genera una presentación primero'); return; }
+  toast('⏳ Generando PPTX...', 8000);
+  try {
+    const pptx = new PptxGenJS();
+    pptx.layout = 'LAYOUT_16x9';
+    const pal = getPalette(lastSlides);
+    const theme = lastSlides.theme || 'general';
+
+    lastSlides.slides.forEach((s, i) => {
+      const sl = pptx.addSlide();
+      const t = s.type || 'content';
+      const BG = pal.bg, ACC = pal.accent, ACC2 = pal.accent2;
+      const TXT = pal.text, SURF = pal.surface, HI = pal.highlight;
+
+      if (t === 'title') {
+        sl.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: '100%', fill: { color: BG } });
+        sl.addShape(pptx.ShapeType.ellipse, { x: 7.8, y: -.6, w: 2.8, h: 2.8, fill: { color: ACC }, transparency: 90 });
+        sl.addShape(pptx.ShapeType.ellipse, { x: -.4, y: 3.8, w: 2, h: 2, fill: { color: ACC2 }, transparency: 90 });
+        sl.addShape(pptx.ShapeType.rect, { x: 3.5, y: 2.55, w: 3, h: .06, fill: { color: ACC } });
+        if (s.icon) sl.addText(s.icon, { x: 0, y: .8, w: '100%', h: .6, fontSize: 28, align: 'center' });
+        sl.addText(s.heading || '', { x: .5, y: 1.1, w: 9, h: 1.4, fontSize: 36, bold: true, color: TXT, fontFace: 'Arial', align: 'center', valign: 'middle' });
+        sl.addText(s.body || '', { x: 1, y: 2.7, w: 8, h: .8, fontSize: 14, color: ACC, fontFace: 'Arial', align: 'center', italic: true });
+        sl.addText('TesJuaMap · by JZ', { x: 0, y: 5.2, w: '100%', h: .3, fontSize: 8, color: '333333', fontFace: 'Arial', align: 'center' });
+
+      } else if (t === 'section') {
+        sl.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: '100%', fill: { color: ACC } });
+        sl.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: .08, h: '100%', fill: { color: '00000030' } });
+        sl.addText('SECCIÓN ' + (i + 1), { x: .5, y: 2.8, w: 9, h: .35, fontSize: 10, bold: true, color: '00000055', fontFace: 'Arial' });
+        sl.addText(s.heading || '', { x: .5, y: 3.1, w: 9, h: 1.4, fontSize: 30, bold: true, color: '0A0A0A', fontFace: 'Arial' });
+        if (s.body) sl.addText(s.body, { x: .5, y: 4.4, w: 9, h: .5, fontSize: 12, color: '22222288', fontFace: 'Arial' });
+
+      } else if (t === 'quote') {
+        sl.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: '100%', fill: { color: SURF } });
+        sl.addShape(pptx.ShapeType.rect, { x: .4, y: 0, w: 9.2, h: .06, fill: { color: ACC } });
+        sl.addShape(pptx.ShapeType.rect, { x: .4, y: 5.56, w: 9.2, h: .06, fill: { color: ACC } });
+        sl.addText('"', { x: 0, y: .4, w: '100%', h: 1.2, fontSize: 80, color: ACC, fontFace: 'Georgia', align: 'center', transparency: 70 });
+        sl.addText(s.text || s.heading || '', { x: .8, y: 1.5, w: 8.4, h: 2.5, fontSize: 20, color: TXT, fontFace: 'Georgia', align: 'center', italic: true, valign: 'middle', wrap: true });
+        if (s.source) sl.addText(s.source, { x: .8, y: 4.3, w: 8.4, h: .5, fontSize: 13, bold: true, color: ACC, fontFace: 'Arial', align: 'center', charSpacing: 3 });
+
+      } else if (t === 'list') {
+        sl.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: '100%', fill: { color: BG } });
+        sl.addShape(pptx.ShapeType.rect, { x: .4, y: .5, w: 9.2, h: .05, fill: { color: ACC2 } });
+        sl.addText(s.heading || '', { x: .4, y: .6, w: 9.2, h: .65, fontSize: 20, bold: true, color: ACC2, fontFace: 'Arial' });
+        const rows = (s.points || []).map(p => ([{ text: '›  ' + p, options: { fontSize: 14, color: TXT, fontFace: 'Arial', paraSpaceAfter: 6 } }]));
+        if (rows.length) sl.addTable(rows, { x: .4, y: 1.4, w: 9.2, colW: [9.2], rowH: .46, border: { type: 'none' }, fill: { color: BG } });
+
+      } else if (t === 'end') {
+        sl.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: '100%', fill: { color: BG } });
+        sl.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: .08, fill: { color: ACC2 } });
+        sl.addShape(pptx.ShapeType.rect, { x: 0, y: 5.54, w: '100%', h: .07, fill: { color: ACC2 } });
+        if (s.icon) sl.addText(s.icon, { x: 0, y: .8, w: '100%', h: .8, fontSize: 32, align: 'center' });
+        sl.addText(s.heading || '', { x: .5, y: 1.7, w: 9, h: 1.1, fontSize: 32, bold: true, color: ACC2, fontFace: 'Arial', align: 'center' });
+        sl.addShape(pptx.ShapeType.rect, { x: 3.8, y: 2.85, w: 2.4, h: .05, fill: { color: ACC2 } });
+        if (s.body) sl.addText(s.body, { x: 1, y: 3, w: 8, h: .8, fontSize: 14, color: ACC2, fontFace: 'Arial', align: 'center', transparency: 40 });
+        sl.addText('TesJuaMap · by JZ', { x: 0, y: 5.2, w: '100%', h: .3, fontSize: 9, color: '1A1A1A', fontFace: 'Arial', align: 'center' });
+
+      } else {
+        sl.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: '100%', fill: { color: BG } });
+        sl.addShape(pptx.ShapeType.rect, { x: .4, y: .45, w: .06, h: .8, fill: { color: ACC } });
+        sl.addText(s.heading || '', { x: .6, y: .45, w: 9, h: .8, fontSize: 22, bold: true, color: TXT, fontFace: 'Arial', valign: 'middle' });
+        sl.addShape(pptx.ShapeType.rect, { x: .4, y: 1.35, w: 9.2, h: .04, fill: { color: '1E1E1E' } });
+        if (s.body) sl.addText(s.body, { x: .4, y: 1.5, w: 9.2, h: 3.8, fontSize: 15, color: 'A0A0A0', fontFace: 'Arial', valign: 'top', wrap: true, paraSpaceAfter: 8 });
+      }
+
+      // Slide number
+      sl.addText(String(i + 1) + ' / ' + lastSlides.slides.length, { x: 9.2, y: 5.25, w: .7, h: .25, fontSize: 7, color: '2A2A2A', fontFace: 'Arial', align: 'right' });
+    });
+
+    const safeName = (lastSlides.title || 'TesJuaMap').replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '_');
+    await pptx.writeFile({ fileName: 'TesJuaMap_' + safeName + '.pptx' });
+    toast('✅ PPTX descargado correctamente');
+  } catch (e) {
+    toast('❌ Error: ' + e.message, 5000);
+  }
+}
+
+// ─── ADMIN ────────────────────────────────────────────────────────────────────
+function openAdmin() {
+  $('adminModal').classList.add('on');
+  if (authToken) {
+    $('loginSection').style.display = 'none';
+    $('adminPanel').style.display = 'block';
+    $('backendUrl').value = BACKEND;
+    loadAdminStatus();
+  } else {
+    $('loginSection').style.display = 'block';
+    $('adminPanel').style.display = 'none';
+  }
+}
+function closeAdmin() { $('adminModal').classList.remove('on'); }
+$('adminModal').addEventListener('click', e => { if (e.target === $('adminModal')) closeAdmin(); });
+
+async function doLogin() {
+  const u = $('adminUser').value.trim(), p = $('adminPass').value;
+  if (!u || !p) { toast('Completa usuario y contraseña'); return; }
+  try {
+    const res = await fetch(BACKEND + '/api/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, password: p })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      authToken = data.token;
+      localStorage.setItem('tjm_token', authToken);
+      $('loginSection').style.display = 'none';
+      $('adminPanel').style.display = 'block';
+      $('backendUrl').value = BACKEND;
+      loadAdminStatus();
+      toast('✅ Bienvenido, ' + data.username);
+    } else {
+      toast('❌ ' + (data.error || 'Error de login'));
+    }
+  } catch { toast('❌ No se pudo conectar al servidor'); }
+}
+
+async function loadAdminStatus() {
+  try {
+    const res = await fetch(BACKEND + '/api/admin/status', { headers: { Authorization: 'Bearer ' + authToken } });
+    const data = await res.json();
+    if (data.ok) {
+      $('adminStatus').classList.add('on');
+      $('adminStatus').innerHTML = `
+        <p>⚡ <strong>Servidor activo</strong> · Uptime: ${Math.round(data.uptime / 60)} min</p>
+        <p>🔑 API Key: <strong>${data.keyPreview}</strong> ${data.geminiConfigured ? '✅' : '❌'}</p>
+        <p>📦 Versión: <strong>${data.version}</strong> · by TesJua JZ</p>
+      `;
+    }
+  } catch { $('adminStatus').innerHTML = '<p style="color:#f97316">⚠️ No se pudo obtener el estado</p>'; $('adminStatus').classList.add('on'); }
+}
+
+async function saveAdmin() {
+  const newUrl = $('backendUrl').value.trim();
+  const newKey = $('newApiKey').value.trim();
+
+  if (newUrl && newUrl !== BACKEND) {
+    BACKEND = newUrl;
+    localStorage.setItem('tjm_backend', BACKEND);
+    toast('✅ URL del backend actualizada');
+    checkStatus();
+  }
+
+  if (newKey) {
+    try {
+      const res = await fetch(BACKEND + '/api/admin/apikey', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + authToken },
+        body: JSON.stringify({ apiKey: newKey })
+      });
+      const data = await res.json();
+      if (data.ok) { toast('✅ API Key actualizada en el servidor'); $('newApiKey').value = ''; }
+      else toast('❌ ' + data.error);
+    } catch { toast('❌ Error actualizando la key'); }
+  }
+
+  closeAdmin();
+}
+</script>
+</body>
+</html>
